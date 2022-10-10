@@ -1,7 +1,8 @@
 import "./App.css";
-import { useState } from "react";
+import { useState,useEffect } from "react";
 import { v4 as uuid } from "uuid";
 
+// button-group
 const buttons = [
   {
     type: "all",
@@ -20,21 +21,23 @@ const buttons = [
 const itemsData = [
   {
     key: uuid(),
-    label: "Complete TIC-TAC-TOE",
+    label: "Have fun",
   },
   {
     key: uuid(),
-    label: "Complete To Do List",
+    label: "Spread Empathy",
   },
   {
     key: uuid(),
-    label: "Attend class 10 times",
+    label: "Generate Value",
   },
 ];
 
 function App() {
+  const storageItems = JSON.parse(localStorage.getItem("items")) || itemsData;
+
   const [itemToDo, setItemTodo] = useState("");
-  const [items, setItems] = useState(itemsData);
+  const [items, setItems] = useState(storageItems);
   const [type, setType] = useState("all");
 
   const handleItemToDo = (event) => {
@@ -61,11 +64,37 @@ function App() {
     setType(type);
   };
 
-  const doneItems = items.filter((item) => item.isDone);
+  const doneItems = items.filter((item) => item.isDone
+  
+  );
   const notDoneItems = items.filter((item) => !item.isDone);
+  const [Svalue,setSvalue]=useState('');
+useEffect(()=>{
+  const jsonItems=JSON.stringify(items);
+  localStorage.setItem("items",jsonItems);
+},[items])
+
+
+  const newArraySearch=items.filter(item=>{
+
+   return item.label.toLowerCase().includes(Svalue.toLowerCase())
+
+
+  })
 
   const filteredItems =
-    type === "active" ? notDoneItems : type === "done" ? doneItems : items;
+    type === "active"  ? notDoneItems : type === "done" ? doneItems : newArraySearch;
+
+
+const deleteItem=(key)=>{
+  setItems(items=>items.filter(i=>i.key!==key))
+}
+   
+
+    
+
+
+
 
   return (
     <div className="todo-app">
@@ -83,6 +112,7 @@ function App() {
           type="text"
           className="form-control search-input"
           placeholder="type to search"
+          onChange={(event)=>setSvalue(event.target.value)}
         />
         {/* Item-status-filter */}
         <div className="btn-group">
@@ -106,14 +136,14 @@ function App() {
           <li
             key={item.key}
             className="list-group-item"
-            onClick={() => handleItemDone(item.key)}
           >
-            <span className={`todo-list-item ${item.isDone ? "done" : ""}`}>
+            <span className={`todo-list-item ${item.isDone ? "important" : ""}`}>
               <span className="todo-list-item-label">{item.label}</span>
 
               <button
                 type="button"
                 className="btn btn-outline-success btn-sm float-right"
+                onClick={() => handleItemDone(item.key)}
               >
                 <i className="fa fa-exclamation" />
               </button>
@@ -121,6 +151,9 @@ function App() {
               <button
                 type="button"
                 className="btn btn-outline-danger btn-sm float-right"
+                onClick={(event)=>{event.stopPropagation();
+                deleteItem(item.key);
+                }}
               >
                 <i className="fa fa-trash-o" />
               </button>
