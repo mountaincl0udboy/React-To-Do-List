@@ -1,3 +1,4 @@
+/* App.js */
 .todo-app {
   margin: 2rem auto 0 auto;
   max-width: 400px;
@@ -68,5 +69,5 @@
 
 .todo-list-item.important .todo-list-item-label {
   font-weight: bold;
-  color: steelblue;
+  color: black;
 }
